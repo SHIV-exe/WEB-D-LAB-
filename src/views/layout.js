@@ -55,6 +55,9 @@ export function layout({ title, body, user }) {
   <main class="container">
     ${raw(body)}
   </main>
+
+  <!-- Load the client-side JS here -->
+  <script src="/js/app.js"></script>
 </body>
 </html>`;
 }

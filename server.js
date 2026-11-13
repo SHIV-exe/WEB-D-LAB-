@@ -7,23 +7,20 @@ import path from 'node:path';
 import './src/db/index.js'; 
 
 import { handleRequest, get, post } from './src/router.js';
-import { sendHtml, redirect, parseCookies } from './src/lib/http.js';
+import { sendHtml, redirect, parseCookies, sendError } from './src/lib/http.js';
 import { getSession } from './src/auth/sessions.js';
 import { hasPermission } from './src/auth/rbac.js';
 
 import { showDashboard } from './src/routes/dashboard.routes.js';
 import { showLoginPage, handleLoginPost, handleLogout } from './src/routes/auth.routes.js';
 import { 
-  showPatientList, 
-  showNewPatientForm, 
-  handleCreatePatient, 
-  showPatientDetail,
-  showEditPatientForm,
-  handleUpdatePatient,
-  handleDischargePatient
+  showPatientList, showNewPatientForm, handleCreatePatient, showPatientDetail,
+  showEditPatientForm, handleUpdatePatient, handleDischargePatient
 } from './src/routes/patients.routes.js';
 import { showNewEncounterForm, handleCreateEncounter } from './src/routes/encounters.routes.js';
-import { showInfrastructure, handleUpdateEquipmentStatus } from './src/routes/infrastructure.routes.js';
+import { 
+  showInfrastructure, handleUpdateEquipmentStatus, showNewBedForm, handleCreateBed, showNewEquipmentForm, handleCreateEquipment
+} from './src/routes/infrastructure.routes.js';
 import { showInventory, handleUpdateQuantity } from './src/routes/inventory.routes.js';
 import { showMaintenanceList, showNewMaintenanceForm, handleCreateTicket, handleUpdateTicketStatus } from './src/routes/maintenance.routes.js';
 import { showAuditLog } from './src/routes/audit.routes.js';
@@ -38,7 +35,7 @@ export function requirePermission(req, res, action, handler) {
   const session = getSession(cookies.session_id);
 
   if (!session) return redirect(res, '/login');
-  if (!hasPermission(session.role, action)) return sendHtml(res, '<h1>403 Forbidden</h1>', 403);
+  if (!hasPermission(session.role, action)) return sendError(res, 403, 'Access Denied', 'You do not have permission to view this page.', session);
   
   req.user = session;
   handler(req, res);
@@ -52,20 +49,24 @@ post('/logout', handleLogout);
 
 get('/dashboard', (req, res) => requirePermission(req, res, 'view_dashboard', showDashboard));
 
-// Patient Routes
 get('/patients', (req, res) => requirePermission(req, res, 'view_patients', showPatientList));
 get('/patients/new', (req, res) => requirePermission(req, res, 'create_patients', showNewPatientForm));
 post('/patients/new', (req, res) => requirePermission(req, res, 'create_patients', handleCreatePatient));
 get('/patients/:id', (req, res) => requirePermission(req, res, 'view_patients', showPatientDetail));
-get('/patients/:id/edit', (req, res) => requirePermission(req, res, 'edit_patients', showEditPatientForm)); // NEW
-post('/patients/:id/edit', (req, res) => requirePermission(req, res, 'edit_patients', handleUpdatePatient)); // NEW
-post('/patients/:id/discharge', (req, res) => requirePermission(req, res, 'edit_patients', handleDischargePatient)); // NEW
+get('/patients/:id/edit', (req, res) => requirePermission(req, res, 'edit_patients', showEditPatientForm));
+post('/patients/:id/edit', (req, res) => requirePermission(req, res, 'edit_patients', handleUpdatePatient));
+post('/patients/:id/discharge', (req, res) => requirePermission(req, res, 'edit_patients', handleDischargePatient));
 
 get('/patients/:id/encounters/new', (req, res) => requirePermission(req, res, 'create_encounters', showNewEncounterForm));
 post('/patients/:id/encounters/new', (req, res) => requirePermission(req, res, 'create_encounters', handleCreateEncounter));
 
+// Infrastructure Routes
 get('/infrastructure', (req, res) => requirePermission(req, res, 'view_infrastructure', showInfrastructure));
 post('/infrastructure/equipment/:id/status', (req, res) => requirePermission(req, res, 'edit_infrastructure', handleUpdateEquipmentStatus));
+get('/infrastructure/beds/new', (req, res) => requirePermission(req, res, 'edit_infrastructure', showNewBedForm));
+post('/infrastructure/beds/new', (req, res) => requirePermission(req, res, 'edit_infrastructure', handleCreateBed));
+get('/infrastructure/equipment/new', (req, res) => requirePermission(req, res, 'edit_infrastructure', showNewEquipmentForm));
+post('/infrastructure/equipment/new', (req, res) => requirePermission(req, res, 'edit_infrastructure', handleCreateEquipment));
 
 get('/inventory', (req, res) => requirePermission(req, res, 'view_inventory', showInventory));
 post('/inventory/:id/update', (req, res) => requirePermission(req, res, 'edit_inventory', handleUpdateQuantity));

@@ -1,5 +1,5 @@
 // src/router.js
-import { sendHtml } from './lib/http.js';
+import { sendError } from './lib/http.js'; // <-- NEW
 
 const routes = [];
 
@@ -11,7 +11,6 @@ export function post(path, handler) {
   routes.push({ method: 'POST', path, handler });
 }
 
-// NEW: Helper to match dynamic routes (e.g., /patients/:id)
 function matchRoute(routePath, requestPath) {
   const routeParts = routePath.split('/');
   const requestParts = requestPath.split('/');
@@ -21,10 +20,8 @@ function matchRoute(routePath, requestPath) {
   const params = {};
   for (let i = 0; i < routeParts.length; i++) {
     if (routeParts[i].startsWith(':')) {
-      // It's a parameter (like :id). Save the value.
       params[routeParts[i].slice(1)] = requestParts[i];
     } else if (routeParts[i] !== requestParts[i]) {
-      // Static part doesn't match
       return null;
     }
   }
@@ -40,16 +37,15 @@ export async function handleRequest(req, res) {
 
   req.parsedUrl = parsedUrl;
   req.query = parsedUrl.searchParams;
-  req.params = {}; // Initialize empty params
+  req.params = {};
 
-  // Find a matching route
   let matchedRoute = null;
   for (const route of routes) {
     if (route.method === method) {
       const params = matchRoute(route.path, pathname);
       if (params) {
         matchedRoute = route;
-        req.params = params; // Attach dynamic params to req
+        req.params = params;
         break;
       }
     }
@@ -60,15 +56,11 @@ export async function handleRequest(req, res) {
       await matchedRoute.handler(req, res);
     } catch (error) {
       console.error(`❌ Error handling ${method} ${pathname}:`, error);
-      sendHtml(res, '<h1>500 Internal Server Error</h1><p>Something went wrong.</p>', 500);
+      // UPDATED: Use styled 500 Error Page
+      sendError(res, 500, 'Internal Server Error', 'Something went wrong on our end. Please try again later.', req.user || null);
     }
   } else {
-    sendHtml(res, `
-      <div style="font-family: sans-serif; text-align: center; margin-top: 50px;">
-        <h1>404 Not Found</h1>
-        <p>The page <strong>${pathname}</strong> does not exist.</p>
-        <a href="/">Go back home</a>
-      </div>
-    `, 404);
+    // UPDATED: Use styled 404 Error Page
+    sendError(res, 404, 'Page Not Found', `The page '${pathname}' does not exist. Check the URL and try again.`, req.user || null);
   }
 }

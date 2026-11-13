@@ -10,8 +10,12 @@ export function renderInfrastructure({ user, beds, equipment }) {
     </div>
 
     <!-- BEDS SECTION -->
-    <h2 style="margin-bottom: 1rem;">Bed Management</h2>
-    <div class="dashboard-grid" style="margin-bottom: 3rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h2 style="margin: 0;">Bed Management</h2>
+      <a href="/infrastructure/beds/new" class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">+ Add Bed</a>
+    </div>
+    
+    <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 3rem;">
       ${raw(beds.map(bed => {
         let statusColor = 'var(--success-color)';
         let statusBg = '#d1e7dd';
@@ -19,9 +23,11 @@ export function renderInfrastructure({ user, beds, equipment }) {
         if (bed.status === 'maintenance') { statusColor = '#664d03'; statusBg = '#fff3cd'; }
         
         return html`
-          <div class="stat-card" style="border-left-color: ${statusColor};">
-            <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">${bed.ward} - Room ${bed.room}${bed.bed_number}</h3>
-            <span style="display: inline-block; background: ${statusBg}; color: ${statusColor}; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase; font-weight: bold; margin-top: 0.5rem;">
+          <div class="stat-card" style="border-left-color: ${statusColor}; padding: 1rem;">
+            <h3 style="font-size: 1rem; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              ${bed.ward} - ${bed.room}${bed.bed_number}
+            </h3>
+            <span style="display: inline-block; background: ${statusBg}; color: ${statusColor}; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.65rem; text-transform: uppercase; font-weight: bold; margin-top: 0.5rem;">
               ${bed.status}
             </span>
           </div>
@@ -30,13 +36,17 @@ export function renderInfrastructure({ user, beds, equipment }) {
     </div>
 
     <!-- EQUIPMENT SECTION -->
-    <h2 style="margin-bottom: 1rem;">Medical Equipment</h2>
-    <div class="card" style="background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h2 style="margin: 0;">Medical Equipment</h2>
+      <a href="/infrastructure/equipment/new" class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">+ Add Equipment</a>
+    </div>
+    
+    <div class="card" style="background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; padding: 0;">
       <table class="table">
         <thead>
           <tr>
             <th>Equipment Name</th>
-            <th>Category</th>
+            <th>Serial Number</th>
             <th>Location</th>
             <th>Status</th>
             <th>Actions</th>
@@ -48,8 +58,8 @@ export function renderInfrastructure({ user, beds, equipment }) {
             
             return html`
               <tr>
-                <td><strong>${item.name}</strong></td>
-                <td>${item.category || 'N/A'}</td>
+                <td><strong>${item.name}</strong><br><span style="font-size: 0.75rem; color: var(--text-muted);">${item.category || 'N/A'}</span></td>
+                <td>${item.serial_number || 'N/A'}</td>
                 <td>${item.location || 'N/A'}</td>
                 <td>
                   <span style="color: ${badgeColor}; font-weight: bold; text-transform: capitalize;">
@@ -74,9 +84,5 @@ export function renderInfrastructure({ user, beds, equipment }) {
     </div>
   `;
 
-  return layout({
-    title: 'Infrastructure',
-    body: content,
-    user
-  });
+  return layout({ title: 'Infrastructure', body: content, user });
 }

@@ -2,7 +2,7 @@
 import { layout } from '../layout.js';
 import { html, raw } from '../../lib/html.js';
 
-export function renderPatientList({ user, patients, searchQuery = '' }) {
+export function renderPatientList({ user, patients, searchQuery = '', statusFilter = '' }) {
   const content = html`
     <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
       <div>
@@ -12,13 +12,21 @@ export function renderPatientList({ user, patients, searchQuery = '' }) {
       <a href="/patients/new" class="btn btn-primary">+ Register Patient</a>
     </div>
 
-    <form action="/patients" method="GET" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; max-width: 400px;">
+    <!-- Updated Search & Filter Bar -->
+    <form action="/patients" method="GET" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; max-width: 600px;">
       <input type="text" name="search" class="form-control" placeholder="Search by name or MRN..." value="${searchQuery}">
-      <button type="submit" class="btn btn-secondary">Search</button>
-      ${searchQuery ? raw(html`<a href="/patients" class="btn btn-secondary" style="background: var(--text-muted);">Clear</a>`) : ''}
+      
+      <select name="status" class="form-control" style="width: auto;">
+        <option value="">All Statuses</option>
+        <option value="1" ${statusFilter === '1' ? 'selected' : ''}>Active</option>
+        <option value="0" ${statusFilter === '0' ? 'selected' : ''}>Discharged</option>
+      </select>
+
+      <button type="submit" class="btn btn-primary">Filter</button>
+      ${(searchQuery || statusFilter) ? raw(html`<a href="/patients" class="btn btn-secondary">Clear</a>`) : ''}
     </form>
 
-    <div class="card" style="background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;">
+    <div class="card" style="background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; padding: 0;">
       <table class="table">
         <thead>
           <tr>
@@ -35,7 +43,7 @@ export function renderPatientList({ user, patients, searchQuery = '' }) {
           ${patients.length === 0 ? raw(html`
             <tr>
               <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
-                No patients found matching your search.
+                No patients found matching your criteria.
               </td>
             </tr>
           `) : raw(patients.map(patient => html`

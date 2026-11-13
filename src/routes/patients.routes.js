@@ -9,20 +9,36 @@ import { logAction } from '../lib/audit.js';
 
 export function showPatientList(req, res) {
   const search = req.query.get('search')?.trim() || '';
-  
-  let patients;
+  const statusFilter = req.query.get('status') || '';
+
+  // Start building the query
+  let sql = 'SELECT * FROM patients WHERE 1=1';
+  const params = [];
+
+  // Add search condition if present
   if (search) {
+    sql += ' AND (first_name LIKE ? OR last_name LIKE ? OR mrn LIKE ?)';
     const searchTerm = `%${search}%`;
-    patients = query(
-      'SELECT * FROM patients WHERE (first_name LIKE ? OR last_name LIKE ? OR mrn LIKE ?) ORDER BY is_active DESC, last_name ASC',
-      [searchTerm, searchTerm, searchTerm]
-    );
-  } else {
-    // Sort active patients first, then by last name
-    patients = query('SELECT * FROM patients ORDER BY is_active DESC, last_name ASC');
+    params.push(searchTerm, searchTerm, searchTerm);
   }
 
-  sendHtml(res, renderPatientList({ user: req.user, patients, searchQuery: search }));
+  // Add status condition if present
+  if (statusFilter === '1' || statusFilter === '0') {
+    sql += ' AND is_active = ?';
+    params.push(parseInt(statusFilter, 10));
+  }
+
+  // Add ordering
+  sql += ' ORDER BY is_active DESC, last_name ASC';
+
+  const patients = query(sql, params);
+
+  sendHtml(res, renderPatientList({ 
+    user: req.user, 
+    patients, 
+    searchQuery: search, 
+    statusFilter 
+  }));
 }
 
 export function showNewPatientForm(req, res) {
@@ -84,8 +100,6 @@ export function showPatientDetail(req, res) {
   sendHtml(res, renderPatientDetail({ user: req.user, patient, encounters }));
 }
 
-// --- NEW CRUD ROUTES ---
-
 export function showEditPatientForm(req, res) {
   const patientId = req.params.id;
   const patient = query('SELECT * FROM patients WHERE id = ?', [patientId])[0];
@@ -128,10 +142,7 @@ export async function handleUpdatePatient(req, res) {
 
 export function handleDischargePatient(req, res) {
   const patientId = req.params.id;
-  
-  // We do not delete the record. We just mark it inactive.
   run('UPDATE patients SET is_active = 0 WHERE id = ?', [patientId]);
-  
   logAction(req.user.user_id, 'DISCHARGE_PATIENT', 'patients', patientId, req);
   redirect(res, `/patients/${patientId}`);
 }

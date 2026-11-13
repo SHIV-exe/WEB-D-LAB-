@@ -10,7 +10,7 @@ export function renderMaintenanceForm({ user, equipment, error = null }) {
     </div>
 
     <div class="card" style="background: white; padding: 2rem; border-radius: var(--radius); box-shadow: var(--shadow); max-width: 800px;">
-      ${error ? html`<div class="alert-error">${error}</div>` : ''}
+      ${error ? raw(html`<div class="alert-error">${error}</div>`) : ''}
 
       <form action="/maintenance/new" method="POST">
         <div class="form-group">
@@ -18,7 +18,9 @@ export function renderMaintenanceForm({ user, equipment, error = null }) {
           <select id="equipment_id" name="equipment_id" class="form-control" required>
             <option value="">-- Choose Equipment --</option>
             ${raw(equipment.map(eq => html`
-              <option value="${eq.id}">${eq.name} (${eq.location || 'Unknown Location'})</option>
+              <option value="${eq.id}">
+                ${eq.name} [SN: ${eq.serial_number || 'N/A'}] (${eq.location || 'Unknown'})
+              </option>
             `).join(''))}
           </select>
         </div>
@@ -46,9 +48,5 @@ export function renderMaintenanceForm({ user, equipment, error = null }) {
     </div>
   `;
 
-  return layout({
-    title: 'New Maintenance Ticket',
-    body: content,
-    user
-  });
+  return layout({ title: 'New Maintenance Ticket', body: content, user });
 }
