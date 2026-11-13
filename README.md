@@ -16,19 +16,18 @@ A web-based hospital management system built strictly with Node.js, HTML, CSS, a
 
 ## ✅ Progress Checklist
 - [x] 1-15. Setup, DB, Auth, Router, Layout
-- [x] 16-17. Dashboard UI & CSS
-- [x] 18-21. Auth Routes, Login UI & Flow
-- [x] 22-25. Patient Directory, Registration & Profiles
-- [x] 26-27. Medical Encounters (Doctor Visits)
-- [x] 28-30. Infrastructure (Beds & Equipment)
-- [x] 31-33. Inventory & Role-Based Access Control (RBAC)
-- [ ] 34. `src/routes/dashboard.routes.js` (Fetch live alerts) **<-- WE ARE HERE**
-- [ ] 35. `src/views/dashboard/index.js` (Display recent visits & alerts)
-- [ ] 36. `server.js` (Complete update)
+- [x] 16-21. Dashboard & CSS
+- [x] 22-27. Patient Directory, Registration, Profiles & Encounters
+- [x] 28-33. Infrastructure, Inventory, Maintenance & RBAC
+- [x] 34-36. Audit Logs & Staff Management
+- [x] 37. Patient Search
+- [x] 38. Database Backups
+- [x] 39. Patient CRUD (Edit Profile & Discharge)
+- [ ] 40. **Next up...**
 
 ## 📝 Notes for AI Assistant
 If you are an AI reading this in a new chat:
 1. Review the "Tech Stack & Rules". **Do not suggest external packages**.
 2. Check the "Progress Checklist" to see what is next.
 3. We are building one file at a time. Provide full code, then line-by-line explanation.
-4. **Current Context:** All core features (Patients, Encounters, Infrastructure, Inventory, RBAC) are complete. We are upgrading the Dashboard to show live alerts and recent activity.
+4. **Current Context:** Full Patient CRUD is complete. We used `ALTER TABLE` to add `is_active` to patients.

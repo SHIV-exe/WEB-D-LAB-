@@ -13,12 +13,21 @@ import { hasPermission } from './src/auth/rbac.js';
 
 import { showDashboard } from './src/routes/dashboard.routes.js';
 import { showLoginPage, handleLoginPost, handleLogout } from './src/routes/auth.routes.js';
-import { showPatientList, showNewPatientForm, handleCreatePatient, showPatientDetail } from './src/routes/patients.routes.js';
+import { 
+  showPatientList, 
+  showNewPatientForm, 
+  handleCreatePatient, 
+  showPatientDetail,
+  showEditPatientForm,
+  handleUpdatePatient,
+  handleDischargePatient
+} from './src/routes/patients.routes.js';
 import { showNewEncounterForm, handleCreateEncounter } from './src/routes/encounters.routes.js';
 import { showInfrastructure, handleUpdateEquipmentStatus } from './src/routes/infrastructure.routes.js';
 import { showInventory, handleUpdateQuantity } from './src/routes/inventory.routes.js';
 import { showMaintenanceList, showNewMaintenanceForm, handleCreateTicket, handleUpdateTicketStatus } from './src/routes/maintenance.routes.js';
-import { showAuditLog } from './src/routes/audit.routes.js'; // <-- NEW
+import { showAuditLog } from './src/routes/audit.routes.js';
+import { showUserList, showNewUserForm, handleCreateUser } from './src/routes/users.routes.js';
 
 try { process.loadEnvFile(); } catch (err) {}
 
@@ -43,10 +52,14 @@ post('/logout', handleLogout);
 
 get('/dashboard', (req, res) => requirePermission(req, res, 'view_dashboard', showDashboard));
 
+// Patient Routes
 get('/patients', (req, res) => requirePermission(req, res, 'view_patients', showPatientList));
 get('/patients/new', (req, res) => requirePermission(req, res, 'create_patients', showNewPatientForm));
 post('/patients/new', (req, res) => requirePermission(req, res, 'create_patients', handleCreatePatient));
 get('/patients/:id', (req, res) => requirePermission(req, res, 'view_patients', showPatientDetail));
+get('/patients/:id/edit', (req, res) => requirePermission(req, res, 'edit_patients', showEditPatientForm)); // NEW
+post('/patients/:id/edit', (req, res) => requirePermission(req, res, 'edit_patients', handleUpdatePatient)); // NEW
+post('/patients/:id/discharge', (req, res) => requirePermission(req, res, 'edit_patients', handleDischargePatient)); // NEW
 
 get('/patients/:id/encounters/new', (req, res) => requirePermission(req, res, 'create_encounters', showNewEncounterForm));
 post('/patients/:id/encounters/new', (req, res) => requirePermission(req, res, 'create_encounters', handleCreateEncounter));
@@ -62,8 +75,11 @@ get('/maintenance/new', (req, res) => requirePermission(req, res, 'create_mainte
 post('/maintenance/new', (req, res) => requirePermission(req, res, 'create_maintenance', handleCreateTicket));
 post('/maintenance/:id/status', (req, res) => requirePermission(req, res, 'edit_maintenance', handleUpdateTicketStatus));
 
-// Audit Route
-get('/audit', (req, res) => requirePermission(req, res, 'view_audit', showAuditLog)); // <-- NEW
+get('/audit', (req, res) => requirePermission(req, res, 'view_audit', showAuditLog));
+
+get('/users', (req, res) => requirePermission(req, res, 'view_users', showUserList));
+get('/users/new', (req, res) => requirePermission(req, res, 'create_users', showNewUserForm));
+post('/users/new', (req, res) => requirePermission(req, res, 'create_users', handleCreateUser));
 
 const server = http.createServer((req, res) => {
   if (req.url.startsWith('/css/') || req.url.startsWith('/js/') || req.url.startsWith('/img/')) {

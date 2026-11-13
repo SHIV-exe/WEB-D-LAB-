@@ -1,6 +1,6 @@
 // src/views/encounters/form.js
 import { layout } from '../layout.js';
-import { html } from '../../lib/html.js';
+import { html, raw } from '../../lib/html.js';
 
 export function renderEncounterForm({ user, patient, error = null }) {
   const content = html`
@@ -10,11 +10,10 @@ export function renderEncounterForm({ user, patient, error = null }) {
     </div>
 
     <div class="card" style="background: white; padding: 2rem; border-radius: var(--radius); box-shadow: var(--shadow); max-width: 900px;">
-      ${error ? html`<div class="alert-error">${error}</div>` : ''}
+      ${error ? raw(html`<div class="alert-error">${error}</div>`) : ''}
 
       <form action="/patients/${patient.id}/encounters/new" method="POST">
         
-        <!-- Clinical Notes -->
         <h3 style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Clinical Notes</h3>
         <div class="form-group">
           <label for="chief_complaint">Chief Complaint (Reason for visit) *</label>
@@ -29,7 +28,6 @@ export function renderEncounterForm({ user, patient, error = null }) {
           <textarea id="notes" name="notes" class="form-control" rows="3" placeholder="Enter detailed medical notes here..."></textarea>
         </div>
 
-        <!-- Vitals -->
         <h3 style="margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Vitals</h3>
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
           <div class="form-group">
@@ -58,7 +56,6 @@ export function renderEncounterForm({ user, patient, error = null }) {
           </div>
         </div>
 
-        <!-- Prescription (Single item for simplicity) -->
         <h3 style="margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Prescription (Optional)</h3>
         <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem;">
           <div class="form-group">

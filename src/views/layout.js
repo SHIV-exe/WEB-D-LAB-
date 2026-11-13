@@ -33,6 +33,9 @@ export function layout({ title, body, user }) {
         ${hasPermission(user.role, 'view_maintenance') 
           ? raw(html`<a href="/maintenance">Maintenance</a>`) : ''}
 
+        ${hasPermission(user.role, 'view_users') 
+          ? raw(html`<a href="/users">Staff</a>`) : ''}
+
         ${hasPermission(user.role, 'view_audit') 
           ? raw(html`<a href="/audit">Audit Log</a>`) : ''}
         

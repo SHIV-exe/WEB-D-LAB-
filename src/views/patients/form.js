@@ -1,6 +1,6 @@
 // src/views/patients/form.js
 import { layout } from '../layout.js';
-import { html } from '../../lib/html.js';
+import { html, raw } from '../../lib/html.js';
 
 export function renderPatientForm({ user, error = null }) {
   const content = html`
@@ -10,7 +10,7 @@ export function renderPatientForm({ user, error = null }) {
     </div>
 
     <div class="card" style="background: white; padding: 2rem; border-radius: var(--radius); box-shadow: var(--shadow); max-width: 800px;">
-      ${error ? html`<div class="alert-error">${error}</div>` : ''}
+      ${error ? raw(html`<div class="alert-error">${error}</div>`) : ''}
 
       <form action="/patients/new" method="POST">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">

@@ -3,14 +3,28 @@ import { layout } from '../layout.js';
 import { html, raw } from '../../lib/html.js';
 
 export function renderPatientDetail({ user, patient, encounters }) {
+  const isActive = patient.is_active === 1;
+
   const content = html`
+    ${!isActive ? raw(html`
+      <div style="background: #f8d7da; color: #842029; padding: 1rem; border-radius: var(--radius); margin-bottom: 1.5rem; font-weight: bold; border: 1px solid #f5c2c7;">
+        ⚠️ This patient has been discharged. Their records are locked in read-only mode.
+      </div>
+    `) : ''}
+
     <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
       <div>
-        <h1>${patient.first_name} ${patient.last_name}</h1>
+        <h1>${patient.first_name} ${patient.last_name} ${!isActive ? '(Discharged)' : ''}</h1>
         <p>Medical Record Number: <strong>${patient.mrn}</strong></p>
       </div>
-      <div>
-        <a href="/patients" class="btn btn-secondary">Back to Directory</a>
+      <div style="display: flex; gap: 0.5rem;">
+        <a href="/patients" class="btn btn-secondary">Back</a>
+        ${isActive ? raw(html`
+          <a href="/patients/${patient.id}/edit" class="btn btn-primary">Edit Profile</a>
+          <form action="/patients/${patient.id}/discharge" method="POST" onsubmit="return confirm('Are you sure you want to discharge this patient? They will be marked inactive.');">
+            <button type="submit" class="btn btn-logout" style="padding: 0.5rem 1rem; font-size: 1rem;">Discharge</button>
+          </form>
+        `) : ''}
       </div>
     </div>
 
@@ -37,7 +51,9 @@ export function renderPatientDetail({ user, patient, encounters }) {
     <div class="card" style="background: white; padding: 1.5rem; border-radius: var(--radius); box-shadow: var(--shadow);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
         <h2 style="padding-bottom: 0.5rem; flex-grow: 1;">Medical Encounters</h2>
-        <a href="/patients/${patient.id}/encounters/new" class="btn btn-primary" style="margin-left: 1rem;">+ New Encounter</a>
+        ${isActive ? raw(html`
+          <a href="/patients/${patient.id}/encounters/new" class="btn btn-primary" style="margin-left: 1rem;">+ New Encounter</a>
+        `) : ''}
       </div>
       
       ${encounters.length === 0 ? raw(html`

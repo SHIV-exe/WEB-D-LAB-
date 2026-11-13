@@ -1,6 +1,6 @@
 // src/views/auth/login.js
 import { layout } from '../layout.js';
-import { html } from '../../lib/html.js';
+import { html, raw } from '../../lib/html.js';
 
 export function renderLogin({ error = null } = {}) {
   const content = html`
@@ -9,11 +9,11 @@ export function renderLogin({ error = null } = {}) {
         <h1>Staff Login</h1>
         <p>Enter your credentials to access the hospital system.</p>
 
-        ${error ? html`
+        ${error ? raw(html`
           <div class="alert-error">
             ${error}
           </div>
-        ` : ''}
+        `) : ''}
 
         <form action="/login" method="POST">
           <div class="form-group">
@@ -35,6 +35,6 @@ export function renderLogin({ error = null } = {}) {
   return layout({
     title: 'Login',
     body: content,
-    user: null // No user is logged in on the login page
+    user: null
   });
 }
