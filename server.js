@@ -15,13 +15,13 @@ import { showDashboard } from './src/routes/dashboard.routes.js';
 import { showLoginPage, handleLoginPost, handleLogout } from './src/routes/auth.routes.js';
 import { 
   showPatientList, showNewPatientForm, handleCreatePatient, showPatientDetail,
-  showEditPatientForm, handleUpdatePatient, handleDischargePatient
+  showEditPatientForm, handleUpdatePatient, handleDischargePatient, handleAssignBed
 } from './src/routes/patients.routes.js';
 import { showNewEncounterForm, handleCreateEncounter } from './src/routes/encounters.routes.js';
 import { 
   showInfrastructure, handleUpdateEquipmentStatus, showNewBedForm, handleCreateBed, showNewEquipmentForm, handleCreateEquipment
 } from './src/routes/infrastructure.routes.js';
-import { showInventory, handleUpdateQuantity } from './src/routes/inventory.routes.js';
+import { showInventory, handleUpdateQuantity, showNewInventoryForm, handleCreateInventory } from './src/routes/inventory.routes.js';
 import { showMaintenanceList, showNewMaintenanceForm, handleCreateTicket, handleUpdateTicketStatus } from './src/routes/maintenance.routes.js';
 import { showAuditLog } from './src/routes/audit.routes.js';
 import { showUserList, showNewUserForm, handleCreateUser } from './src/routes/users.routes.js';
@@ -49,6 +49,7 @@ post('/logout', handleLogout);
 
 get('/dashboard', (req, res) => requirePermission(req, res, 'view_dashboard', showDashboard));
 
+// Patient Routes
 get('/patients', (req, res) => requirePermission(req, res, 'view_patients', showPatientList));
 get('/patients/new', (req, res) => requirePermission(req, res, 'create_patients', showNewPatientForm));
 post('/patients/new', (req, res) => requirePermission(req, res, 'create_patients', handleCreatePatient));
@@ -56,6 +57,7 @@ get('/patients/:id', (req, res) => requirePermission(req, res, 'view_patients', 
 get('/patients/:id/edit', (req, res) => requirePermission(req, res, 'edit_patients', showEditPatientForm));
 post('/patients/:id/edit', (req, res) => requirePermission(req, res, 'edit_patients', handleUpdatePatient));
 post('/patients/:id/discharge', (req, res) => requirePermission(req, res, 'edit_patients', handleDischargePatient));
+post('/patients/:id/assign-bed', (req, res) => requirePermission(req, res, 'edit_patients', handleAssignBed));
 
 get('/patients/:id/encounters/new', (req, res) => requirePermission(req, res, 'create_encounters', showNewEncounterForm));
 post('/patients/:id/encounters/new', (req, res) => requirePermission(req, res, 'create_encounters', handleCreateEncounter));
@@ -68,9 +70,13 @@ post('/infrastructure/beds/new', (req, res) => requirePermission(req, res, 'edit
 get('/infrastructure/equipment/new', (req, res) => requirePermission(req, res, 'edit_infrastructure', showNewEquipmentForm));
 post('/infrastructure/equipment/new', (req, res) => requirePermission(req, res, 'edit_infrastructure', handleCreateEquipment));
 
+// Inventory Routes
 get('/inventory', (req, res) => requirePermission(req, res, 'view_inventory', showInventory));
+get('/inventory/new', (req, res) => requirePermission(req, res, 'edit_inventory', showNewInventoryForm)); // <-- NEW
+post('/inventory/new', (req, res) => requirePermission(req, res, 'edit_inventory', handleCreateInventory)); // <-- NEW
 post('/inventory/:id/update', (req, res) => requirePermission(req, res, 'edit_inventory', handleUpdateQuantity));
 
+// Maintenance Routes
 get('/maintenance', (req, res) => requirePermission(req, res, 'view_maintenance', showMaintenanceList));
 get('/maintenance/new', (req, res) => requirePermission(req, res, 'create_maintenance', showNewMaintenanceForm));
 post('/maintenance/new', (req, res) => requirePermission(req, res, 'create_maintenance', handleCreateTicket));

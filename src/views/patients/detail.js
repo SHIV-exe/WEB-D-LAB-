@@ -2,7 +2,7 @@
 import { layout } from '../layout.js';
 import { html, raw } from '../../lib/html.js';
 
-export function renderPatientDetail({ user, patient, encounters }) {
+export function renderPatientDetail({ user, patient, encounters, assignedBed, availableBeds }) {
   const isActive = patient.is_active === 1;
 
   const content = html`
@@ -21,24 +21,51 @@ export function renderPatientDetail({ user, patient, encounters }) {
         <a href="/patients" class="btn btn-secondary">Back</a>
         ${isActive ? raw(html`
           <a href="/patients/${patient.id}/edit" class="btn btn-primary">Edit Profile</a>
-          <form action="/patients/${patient.id}/discharge" method="POST" onsubmit="return confirm('Are you sure you want to discharge this patient? They will be marked inactive.');">
+          <form action="/patients/${patient.id}/discharge" method="POST" onsubmit="return confirm('Are you sure you want to discharge this patient?');">
             <button type="submit" class="btn btn-logout" style="padding: 0.5rem 1rem; font-size: 1rem;">Discharge</button>
           </form>
         `) : ''}
       </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+      <!-- Demographics -->
       <div class="card" style="background: white; padding: 1.5rem; border-radius: var(--radius); box-shadow: var(--shadow);">
         <h2 style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Demographics</h2>
         <table style="width: 100%; border-collapse: collapse;">
-          <tr style="border-bottom: 1px solid var(--bg-color);"><td style="padding: 0.5rem 0; color: var(--text-muted); width: 40%;">Date of Birth</td><td style="padding: 0.5rem 0; font-weight: 500;">${patient.dob || 'N/A'}</td></tr>
+          <tr style="border-bottom: 1px solid var(--bg-color);"><td style="padding: 0.5rem 0; color: var(--text-muted); width: 40%;">DOB</td><td style="padding: 0.5rem 0; font-weight: 500;">${patient.dob || 'N/A'}</td></tr>
           <tr style="border-bottom: 1px solid var(--bg-color);"><td style="padding: 0.5rem 0; color: var(--text-muted);">Sex</td><td style="padding: 0.5rem 0; font-weight: 500;">${patient.sex || 'N/A'}</td></tr>
           <tr style="border-bottom: 1px solid var(--bg-color);"><td style="padding: 0.5rem 0; color: var(--text-muted);">Phone</td><td style="padding: 0.5rem 0; font-weight: 500;">${patient.phone || 'N/A'}</td></tr>
-          <tr style="border-bottom: 1px solid var(--bg-color);"><td style="padding: 0.5rem 0; color: var(--text-muted);">Address</td><td style="padding: 0.5rem 0; font-weight: 500;">${patient.address || 'N/A'}</td></tr>
         </table>
       </div>
 
+      <!-- Bed Assignment Card -->
+      <div class="card" style="background: white; padding: 1.5rem; border-radius: var(--radius); box-shadow: var(--shadow); border-top: 4px solid var(--primary-color);">
+        <h2 style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Bed Assignment</h2>
+        
+        ${assignedBed ? raw(html`
+          <div style="background: #e0f2fe; padding: 1rem; border-radius: var(--radius); margin-bottom: 1rem;">
+            <p style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Currently In:</p>
+            <h3 style="font-size: 1.25rem; color: var(--primary-color);">${assignedBed.ward} - Room ${assignedBed.room}${assignedBed.bed_number}</h3>
+          </div>
+        `) : raw(html`
+          <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 0.9rem;">No bed currently assigned.</p>
+        `)}
+
+        ${isActive ? raw(html`
+          <form action="/patients/${patient.id}/assign-bed" method="POST" style="display: flex; gap: 0.5rem;">
+            <select name="bed_id" class="form-control">
+              <option value="">-- Unassign Bed --</option>
+              ${raw(availableBeds.map(bed => html`
+                <option value="${bed.id}">${bed.ward} - ${bed.room}${bed.bed_number}</option>
+              `).join(''))}
+            </select>
+            <button type="submit" class="btn btn-secondary">Assign</button>
+          </form>
+        `) : ''}
+      </div>
+
+      <!-- Medical Alerts -->
       <div class="card" style="background: white; padding: 1.5rem; border-radius: var(--radius); box-shadow: var(--shadow); border-top: 4px solid var(--danger-color);">
         <h2 style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; color: var(--danger-color);">⚠️ Medical Alerts</h2>
         <h3 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">Known Allergies</h3>
@@ -48,6 +75,7 @@ export function renderPatientDetail({ user, patient, encounters }) {
       </div>
     </div>
 
+    <!-- Medical Encounters (Same as before) -->
     <div class="card" style="background: white; padding: 1.5rem; border-radius: var(--radius); box-shadow: var(--shadow);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
         <h2 style="padding-bottom: 0.5rem; flex-grow: 1;">Medical Encounters</h2>
@@ -96,9 +124,5 @@ export function renderPatientDetail({ user, patient, encounters }) {
     </div>
   `;
 
-  return layout({
-    title: `${patient.first_name} ${patient.last_name}`,
-    body: content,
-    user
-  });
+  return layout({ title: `${patient.first_name} ${patient.last_name}`, body: content, user });
 }

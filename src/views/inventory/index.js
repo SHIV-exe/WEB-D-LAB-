@@ -4,12 +4,15 @@ import { html, raw } from '../../lib/html.js';
 
 export function renderInventory({ user, inventory }) {
   const content = html`
-    <div class="page-header">
-      <h1>Hospital Inventory</h1>
-      <p>Track medical supplies, equipment parts, and medications.</p>
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h1>Hospital Inventory</h1>
+        <p>Track medical supplies, equipment parts, and medications.</p>
+      </div>
+      <a href="/inventory/new" class="btn btn-primary">+ Add Item</a>
     </div>
 
-    <div class="card" style="background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;">
+    <div class="card" style="background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; padding: 0;">
       <table class="table">
         <thead>
           <tr>

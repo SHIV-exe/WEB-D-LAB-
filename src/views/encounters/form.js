@@ -2,7 +2,10 @@
 import { layout } from '../layout.js';
 import { html, raw } from '../../lib/html.js';
 
-export function renderEncounterForm({ user, patient, error = null }) {
+export function renderEncounterForm({ user, patient, inventory, error = null }) {
+  // Filter inventory to only show items that are actually in stock
+  const inStock = inventory.filter(item => item.quantity > 0);
+
   const content = html`
     <div class="page-header">
       <h1>New Medical Encounter</h1>
@@ -57,20 +60,32 @@ export function renderEncounterForm({ user, patient, error = null }) {
         </div>
 
         <h3 style="margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Prescription (Optional)</h3>
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem;">
-          <div class="form-group">
-            <label for="drug_name">Medication</label>
-            <input type="text" id="drug_name" name="drug_name" class="form-control" placeholder="e.g., Amoxicillin">
+        
+        ${inStock.length === 0 ? raw(html`
+          <div class="alert-error" style="background: #fff3cd; color: #664d03; border-color: #ffecb5;">
+            ⚠️ The pharmacy inventory is currently empty or out of stock. Cannot prescribe medications.
           </div>
-          <div class="form-group">
-            <label for="dose">Dose</label>
-            <input type="text" id="dose" name="dose" class="form-control" placeholder="e.g., 500mg">
+        `) : raw(html`
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label for="drug_name">Medication</label>
+              <select id="drug_name" name="drug_name" class="form-control">
+                <option value="">-- No medication --</option>
+                ${raw(inStock.map(item => html`
+                  <option value="${item.item_name}">${item.item_name} (${item.quantity} in stock)</option>
+                `).join(''))}
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="dose">Dose</label>
+              <input type="text" id="dose" name="dose" class="form-control" placeholder="e.g., 500mg">
+            </div>
+            <div class="form-group">
+              <label for="frequency">Frequency</label>
+              <input type="text" id="frequency" name="frequency" class="form-control" placeholder="e.g., 3x daily">
+            </div>
           </div>
-          <div class="form-group">
-            <label for="frequency">Frequency</label>
-            <input type="text" id="frequency" name="frequency" class="form-control" placeholder="e.g., 3x daily">
-          </div>
-        </div>
+        `)}
 
         <div style="margin-top: 2rem; display: flex; gap: 1rem;">
           <button type="submit" class="btn btn-primary">Save Encounter</button>

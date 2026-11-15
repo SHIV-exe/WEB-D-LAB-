@@ -9,13 +9,12 @@ export function renderInfrastructure({ user, beds, equipment }) {
       <p>Manage hospital beds, equipment, and maintenance status.</p>
     </div>
 
-    <!-- BEDS SECTION -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
       <h2 style="margin: 0;">Bed Management</h2>
       <a href="/infrastructure/beds/new" class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">+ Add Bed</a>
     </div>
     
-    <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 3rem;">
+    <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 3rem;">
       ${raw(beds.map(bed => {
         let statusColor = 'var(--success-color)';
         let statusBg = '#d1e7dd';
@@ -23,11 +22,20 @@ export function renderInfrastructure({ user, beds, equipment }) {
         if (bed.status === 'maintenance') { statusColor = '#664d03'; statusBg = '#fff3cd'; }
         
         return html`
-          <div class="stat-card" style="border-left-color: ${statusColor}; padding: 1rem;">
-            <h3 style="font-size: 1rem; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-              ${bed.ward} - ${bed.room}${bed.bed_number}
-            </h3>
-            <span style="display: inline-block; background: ${statusBg}; color: ${statusColor}; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.65rem; text-transform: uppercase; font-weight: bold; margin-top: 0.5rem;">
+          <div class="stat-card" style="border-left-color: ${statusColor}; padding: 1rem; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <h3 style="font-size: 1rem; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                ${bed.ward} - ${bed.room}${bed.bed_number}
+              </h3>
+              
+              ${bed.patient_id ? raw(html`
+                <p style="font-size: 0.8rem; color: var(--primary-color); font-weight: 600; margin-bottom: 0.5rem;">
+                  <a href="/patients/${bed.patient_id}" style="text-decoration: none;">👤 ${bed.first_name} ${bed.last_name}</a>
+                </p>
+              `) : ''}
+            </div>
+            
+            <span style="display: inline-block; background: ${statusBg}; color: ${statusColor}; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.65rem; text-transform: uppercase; font-weight: bold; margin-top: 0.5rem; width: fit-content;">
               ${bed.status}
             </span>
           </div>
@@ -35,7 +43,6 @@ export function renderInfrastructure({ user, beds, equipment }) {
       }).join(''))}
     </div>
 
-    <!-- EQUIPMENT SECTION -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
       <h2 style="margin: 0;">Medical Equipment</h2>
       <a href="/infrastructure/equipment/new" class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">+ Add Equipment</a>

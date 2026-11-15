@@ -5,7 +5,14 @@ import { renderBedForm, renderEquipmentForm } from '../views/infrastructure/form
 import { sendHtml, redirect, readBody } from '../lib/http.js';
 
 export function showInfrastructure(req, res) {
-  const beds = query('SELECT * FROM beds ORDER BY ward, room, bed_number');
+  // JOIN beds with patients so we know who is in the bed
+  const beds = query(`
+    SELECT b.*, p.first_name, p.last_name 
+    FROM beds b 
+    LEFT JOIN patients p ON b.patient_id = p.id 
+    ORDER BY b.ward, b.room, b.bed_number
+  `);
+
   const equipment = query('SELECT * FROM equipment ORDER BY name, serial_number');
   sendHtml(res, renderInfrastructure({ user: req.user, beds, equipment }));
 }
@@ -34,7 +41,6 @@ export async function handleCreateBed(req, res) {
     return sendHtml(res, renderBedForm({ user: req.user, error: 'All fields are required.' }), 400);
   }
 
-  // Check for duplicates
   const existing = query('SELECT id FROM beds WHERE ward = ? AND room = ? AND bed_number = ?', [ward, room, bed_number]);
   if (existing.length > 0) {
     return sendHtml(res, renderBedForm({ user: req.user, error: 'This bed already exists.' }), 400);
@@ -59,10 +65,6 @@ export async function handleCreateEquipment(req, res) {
     return sendHtml(res, renderEquipmentForm({ user: req.user, error: 'Equipment name is required.' }), 400);
   }
 
-  run(
-    'INSERT INTO equipment (name, serial_number, category, location) VALUES (?, ?, ?, ?)',
-    [name, serial_number, category, location]
-  );
-  
+  run('INSERT INTO equipment (name, serial_number, category, location) VALUES (?, ?, ?, ?)', [name, serial_number, category, location]);
   redirect(res, '/infrastructure');
 }

@@ -13,7 +13,10 @@ export function showNewEncounterForm(req, res) {
     return sendHtml(res, '<h1>404</h1><p>Patient not found.</p>', 404);
   }
 
-  sendHtml(res, renderEncounterForm({ user: req.user, patient }));
+  // Fetch inventory to populate the dropdown
+  const inventory = query('SELECT * FROM inventory ORDER BY item_name ASC');
+
+  sendHtml(res, renderEncounterForm({ user: req.user, patient, inventory }));
 }
 
 export async function handleCreateEncounter(req, res) {
@@ -37,18 +40,19 @@ export async function handleCreateEncounter(req, res) {
   const dose = body.get('dose')?.trim() || null;
   const frequency = body.get('frequency')?.trim() || null;
 
-  // We need the patient details in case of validation error
   const patient = query('SELECT * FROM patients WHERE id = ?', [patientId])[0];
 
   if (!chief_complaint) {
+    const inventory = query('SELECT * FROM inventory ORDER BY item_name ASC');
     return sendHtml(res, renderEncounterForm({ 
       user: req.user, 
       patient, 
+      inventory,
       error: 'Chief complaint is required.' 
     }), 400);
   }
 
-  // 1. Insert the encounter and get its ID
+  // 1. Insert the encounter
   const result = run(
     `INSERT INTO encounters (patient_id, doctor_id, chief_complaint, diagnosis, notes) 
      VALUES (?, ?, ?, ?, ?)`,
@@ -66,15 +70,20 @@ export async function handleCreateEncounter(req, res) {
     );
   }
 
-  // 3. If a prescription was provided, insert it
+  // 3. If a prescription was provided, insert it AND deduct from inventory
   if (drug_name && dose) {
     run(
       `INSERT INTO prescriptions (encounter_id, drug_name, dose, frequency, prescribed_by) 
        VALUES (?, ?, ?, ?, ?)`,
       [encounterId, drug_name, dose, frequency, req.user.user_id]
     );
+
+    // Deduct 1 from the inventory
+    run(
+      'UPDATE inventory SET quantity = quantity - 1 WHERE item_name = ? AND quantity > 0',
+      [drug_name]
+    );
   }
 
-  // Redirect back to the patient's profile
   redirect(res, `/patients/${patientId}`);
 }
