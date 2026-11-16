@@ -31,6 +31,44 @@ export function showPatientList(req, res) {
   sendHtml(res, renderPatientList({ user: req.user, patients, searchQuery: search, statusFilter }));
 }
 
+// NEW: Export Patients to CSV
+export function exportPatientsCSV(req, res) {
+  const patients = query('SELECT * FROM patients ORDER BY last_name ASC');
+
+  // Define CSV Headers
+  const headers = ['MRN', 'First Name', 'Last Name', 'DOB', 'Sex', 'Phone', 'Address', 'Emergency Contact', 'Allergies', 'Status'];
+  
+  // Helper to escape values (wrap in quotes and escape internal quotes)
+  const escapeCsv = (val) => {
+    if (val === null || val === undefined) return '""';
+    return `"${String(val).replace(/"/g, '""')}"`;
+  };
+
+  // Map rows to CSV format
+  const rows = patients.map(p => [
+    escapeCsv(p.mrn),
+    escapeCsv(p.first_name),
+    escapeCsv(p.last_name),
+    escapeCsv(p.dob),
+    escapeCsv(p.sex),
+    escapeCsv(p.phone),
+    escapeCsv(p.address),
+    escapeCsv(p.emergency_contact),
+    escapeCsv(p.allergies),
+    escapeCsv(p.is_active === 1 ? 'Active' : 'Discharged')
+  ].join(','));
+
+  // Combine headers and rows
+  const csvString = [headers.join(','), ...rows].join('\n');
+
+  // Send file to browser
+  res.writeHead(200, {
+    'Content-Type': 'text/csv',
+    'Content-Disposition': 'attachment; filename="patients_export.csv"'
+  });
+  res.end(csvString);
+}
+
 export function showNewPatientForm(req, res) {
   sendHtml(res, renderPatientForm({ user: req.user }));
 }
@@ -72,10 +110,7 @@ export function showPatientDetail(req, res) {
 
   logAction(req.user.user_id, 'VIEW_PATIENT', 'patients', patientId, req);
 
-  // Fetch current assigned bed
   const assignedBed = query('SELECT * FROM beds WHERE patient_id = ?', [patientId])[0] || null;
-  
-  // Fetch available beds for the dropdown
   const availableBeds = query("SELECT * FROM beds WHERE status = 'available' ORDER BY ward, room, bed_number");
 
   const encounters = query(`
@@ -140,10 +175,8 @@ export async function handleAssignBed(req, res) {
   const body = await readBody(req);
   const bedId = body.get('bed_id');
 
-  // 1. Unassign any currently assigned bed for this patient
   run("UPDATE beds SET patient_id = NULL, status = 'available' WHERE patient_id = ?", [patientId]);
 
-  // 2. If a new bed was selected, assign it
   if (bedId) {
     run("UPDATE beds SET patient_id = ?, status = 'occupied' WHERE id = ?", [patientId, bedId]);
   }
@@ -154,13 +187,8 @@ export async function handleAssignBed(req, res) {
 
 export function handleDischargePatient(req, res) {
   const patientId = req.params.id;
-  
-  // 1. Mark patient as inactive
   run('UPDATE patients SET is_active = 0 WHERE id = ?', [patientId]);
-  
-  // 2. Free up their bed
   run("UPDATE beds SET patient_id = NULL, status = 'available' WHERE patient_id = ?", [patientId]);
-  
   logAction(req.user.user_id, 'DISCHARGE_PATIENT', 'patients', patientId, req);
   redirect(res, `/patients/${patientId}`);
 }

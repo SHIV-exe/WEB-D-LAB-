@@ -9,10 +9,12 @@ export function renderPatientList({ user, patients, searchQuery = '', statusFilt
         <h1>Patient Directory</h1>
         <p>Manage and view all registered patients.</p>
       </div>
-      <a href="/patients/new" class="btn btn-primary">+ Register Patient</a>
+      <div style="display: flex; gap: 0.5rem;">
+        <a href="/patients/export" class="btn btn-secondary">Export CSV</a>
+        <a href="/patients/new" class="btn btn-primary">+ Register Patient</a>
+      </div>
     </div>
 
-    <!-- Updated Search & Filter Bar -->
     <form action="/patients" method="GET" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; max-width: 600px;">
       <input type="text" name="search" class="form-control" placeholder="Search by name or MRN..." value="${searchQuery}">
       

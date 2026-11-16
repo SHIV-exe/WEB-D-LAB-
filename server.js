@@ -14,7 +14,7 @@ import { hasPermission } from './src/auth/rbac.js';
 import { showDashboard } from './src/routes/dashboard.routes.js';
 import { showLoginPage, handleLoginPost, handleLogout } from './src/routes/auth.routes.js';
 import { 
-  showPatientList, showNewPatientForm, handleCreatePatient, showPatientDetail,
+  showPatientList, exportPatientsCSV, showNewPatientForm, handleCreatePatient, showPatientDetail,
   showEditPatientForm, handleUpdatePatient, handleDischargePatient, handleAssignBed
 } from './src/routes/patients.routes.js';
 import { showNewEncounterForm, handleCreateEncounter } from './src/routes/encounters.routes.js';
@@ -51,6 +51,7 @@ get('/dashboard', (req, res) => requirePermission(req, res, 'view_dashboard', sh
 
 // Patient Routes
 get('/patients', (req, res) => requirePermission(req, res, 'view_patients', showPatientList));
+get('/patients/export', (req, res) => requirePermission(req, res, 'view_patients', exportPatientsCSV)); // <-- NEW (Must be before :id)
 get('/patients/new', (req, res) => requirePermission(req, res, 'create_patients', showNewPatientForm));
 post('/patients/new', (req, res) => requirePermission(req, res, 'create_patients', handleCreatePatient));
 get('/patients/:id', (req, res) => requirePermission(req, res, 'view_patients', showPatientDetail));
@@ -72,8 +73,8 @@ post('/infrastructure/equipment/new', (req, res) => requirePermission(req, res, 
 
 // Inventory Routes
 get('/inventory', (req, res) => requirePermission(req, res, 'view_inventory', showInventory));
-get('/inventory/new', (req, res) => requirePermission(req, res, 'edit_inventory', showNewInventoryForm)); // <-- NEW
-post('/inventory/new', (req, res) => requirePermission(req, res, 'edit_inventory', handleCreateInventory)); // <-- NEW
+get('/inventory/new', (req, res) => requirePermission(req, res, 'edit_inventory', showNewInventoryForm));
+post('/inventory/new', (req, res) => requirePermission(req, res, 'edit_inventory', handleCreateInventory));
 post('/inventory/:id/update', (req, res) => requirePermission(req, res, 'edit_inventory', handleUpdateQuantity));
 
 // Maintenance Routes
