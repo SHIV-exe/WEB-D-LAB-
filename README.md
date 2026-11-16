@@ -13,6 +13,7 @@ The system manages the complete lifecycle of hospital operations: from patient r
 ### Clinical & Patient Care
 *   **Patient Management:** Full CRUD (Create, Read, Update, "Delete"/Discharge) for patient records, including medical alerts for allergies.
 *   **Smart Search & Filter:** Search patients by name or Medical Record Number (MRN), and filter by Active or Discharged status.
+*   **CSV Export:** Download the entire patient directory as a CSV file for external reporting or data analysis.
 *   **Medical Encounters:** Doctors can record visits, including chief complaints, diagnoses, clinical notes, and Vitals (Temp, BP, Pulse, SpO2).
 *   **Pharmacy Integration:** When a doctor writes a prescription from the inventory dropdown, the system automatically deducts the medication from the hospital's stock.
 
@@ -44,11 +45,7 @@ This project operates on a "Zero Dependency" philosophy:
 
 ### Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/hospital-system.git
-   cd hospital-system
-   npm install
-   cp .env.example .env
-   npm run seed
-   npm run dev
+npm install
+cp .env.example .env
+npm run seed
+npm run dev
