@@ -35,7 +35,7 @@ The system manages the complete lifecycle of hospital operations: from patient r
 This project operates on a "Zero Dependency" philosophy:
 *   **Backend:** Node.js (v24+). Utilizes the built-in `node:http` for the server, `node:crypto` for security, and `node:sqlite` for the database. No Express, no `better-sqlite3`.
 *   **Frontend:** Server-Side Rendering (SSR) using custom JavaScript template literals. No React, no Vue, no Tailwind. 
-*   **Database:** Relational SQLite database stored locally. 
+*   **Database:** Relational SQLite database stored locally. Enables WAL (Write-Ahead Logging) mode for concurrent reads/writes.
 *   **Styling:** A custom "Clinical Minimalism" design system built entirely with standard CSS Variables, Flexbox, and Grid.
 
 ## Getting Started
@@ -43,9 +43,60 @@ This project operates on a "Zero Dependency" philosophy:
 ### Prerequisites
 *   Node.js (v24.0.0 or higher is required for the built-in `node:sqlite` module).
 
-### Installation
+### Installation & Run Commands
 
-npm install
-cp .env.example .env
-npm run seed
-npm run dev
+Follow these exact commands to run the project locally:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/hospital-system.git
+   cd hospital-system
+   npm install
+   cp .env.example .env
+   npm run seed
+   npm run dev
+   ```
+
+2. Open your browser and navigate to:
+   ```
+   http://localhost:3000
+   ```
+
+## Default Login Credentials & Access Control (RBAC)
+
+To test the security system and verify role restrictions, log in with any of the seeded default accounts. The navigation bar, action buttons, and accessible pages adapt dynamically based on the permissions of each role.
+
+### 🔑 Default Credentials
+
+| Role | Username | Password | Full Name | Primary Responsibilities |
+| :--- | :--- | :--- | :--- | :--- |
+| **Admin** | `admin` | `admin123` | System Administrator | Full system administration, staff user accounts, and security audit logs |
+| **Doctor** | `dr_smith` | `doctor123` | Dr. John Smith | Patient clinical evaluations, medical encounters, and prescription management |
+| **Nurse** | `nurse_joy` | `nurse123` | Joy Williams | Patient vital signs, encounter reviews, and inventory stock adjustments |
+| **Receptionist** | `reception1` | `recep123` | Sarah Connor | Patient onboarding, directory searches, and bed assignment checks |
+| **Maintenance** | *(Create via Admin)* | *(Set by Admin)* | Maintenance Staff | Equipment repairs, status updates, and maintenance ticketing workflow |
+
+---
+
+### 🛡️ Role Access Matrix
+
+| Feature / Module | Route(s) | Admin | Doctor | Nurse | Receptionist | Maintenance |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **Dashboard** | `/dashboard` | ✅ Full | ✅ Full | ✅ Full | ✅ Full | ✅ Full |
+| **Patient Directory & CSV Export** | `/patients`, `/patients/export` | ✅ Allowed | ✅ Allowed | ✅ Allowed | ✅ Allowed | ❌ Blocked |
+| **Register New Patient** | `/patients/new` | ✅ Allowed | ✅ Allowed | ❌ Blocked | ✅ Allowed | ❌ Blocked |
+| **Edit Patient & Bed Assignment** | `/patients/:id/edit`, `/assign-bed` | ✅ Allowed | ✅ Allowed | ✅ Allowed | ✅ Allowed | ❌ Blocked |
+| **Create Medical Encounter & Rx** | `/patients/:id/encounters/new` | ✅ Allowed | ✅ Allowed | ❌ Blocked | ❌ Blocked | ❌ Blocked |
+| **View Medical Encounters & Vitals** | `/patients/:id` | ✅ Allowed | ✅ Allowed | ✅ Allowed | ❌ Blocked | ❌ Blocked |
+| **Infrastructure (Beds & Equipment)** | `/infrastructure` | ✅ Manage | 👁️ View Only | 👁️ View Only | 👁️ View Only | ✅ Manage |
+| **Add New Beds & Equipment** | `/infrastructure/beds/new`, `.../equipment/new` | ✅ Allowed | ❌ Blocked | ❌ Blocked | ❌ Blocked | ✅ Allowed |
+| **Inventory Supplies & Stocks** | `/inventory`, `/inventory/new`, `.../update` | ✅ Full CRUD | 👁️ View Only | ✅ Update Stock | ❌ Blocked | ✅ Update Stock |
+| **Maintenance Ticketing** | `/maintenance`, `/maintenance/new`, `.../status` | ✅ Full CRUD | ➕ Report Issue | ➕ Report Issue | ❌ Blocked | ✅ Resolve Tickets |
+| **Audit Log Viewer** | `/audit` | ✅ Full Access | 👁️ View Only | ❌ Blocked | ❌ Blocked | ❌ Blocked |
+| **Staff & User Management** | `/users`, `/users/new` | ✅ Full Access | ❌ Blocked | ❌ Blocked | ❌ Blocked | ❌ Blocked |
+
+> [!NOTE]
+> Attempting to manually navigate to an unauthorized URL (e.g. logging in as `reception1` and navigating to `/audit` or `/users`) will be immediately intercepted by the RBAC middleware and blocked with an **HTTP 403 Forbidden** status.
+
+
+
