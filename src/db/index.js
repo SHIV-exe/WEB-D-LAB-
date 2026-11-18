@@ -43,6 +43,10 @@ const schemaPath = path.join(__dirname, 'schema.sql');
 const schema = fs.readFileSync(schemaPath, 'utf8');
 db.exec(schema);
 
+// Auto-migrate newly added columns for existing databases
+try { db.exec('ALTER TABLE patients ADD COLUMN is_active INTEGER DEFAULT 1;'); } catch (_) {}
+try { db.exec('ALTER TABLE equipment ADD COLUMN serial_number TEXT;'); } catch (_) {}
+
 console.log('✅ Database connected and schema verified.');
 
 export function query(sql, params = []) {

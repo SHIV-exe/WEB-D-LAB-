@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS patients (
     address TEXT,
     emergency_contact TEXT,
     allergies TEXT,
+    is_active INTEGER DEFAULT 1, -- 1 = active, 0 = discharged
     created_at TEXT DEFAULT (datetime('now'))
 );
 
@@ -96,6 +97,7 @@ CREATE TABLE IF NOT EXISTS beds (
 CREATE TABLE IF NOT EXISTS equipment (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
+    serial_number TEXT,
     category TEXT,
     location TEXT,
     status TEXT DEFAULT 'working' CHECK(status IN ('working', 'broken', 'maintenance')),

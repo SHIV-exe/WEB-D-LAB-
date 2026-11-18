@@ -73,13 +73,13 @@ if (bedCount === 0) {
 const eqCount = query('SELECT COUNT(*) as count FROM equipment')[0].count;
 if (eqCount === 0) {
   const equipment = [
-    ['Ventilator', 'Life Support', 'ICU', 'working'],
-    ['X-Ray Machine', 'Imaging', 'Radiology', 'maintenance'],
-    ['Wheelchair', 'Mobility', 'General', 'working']
+    ['Ventilator', 'VNT-101', 'Life Support', 'ICU', 'working'],
+    ['X-Ray Machine', 'XR-201', 'Imaging', 'Radiology', 'maintenance'],
+    ['Wheelchair', 'WC-301', 'Mobility', 'General', 'working']
   ];
 
   for (const e of equipment) {
-    run('INSERT INTO equipment (name, category, location, status) VALUES (?, ?, ?, ?)', e);
+    run('INSERT INTO equipment (name, serial_number, category, location, status) VALUES (?, ?, ?, ?, ?)', e);
   }
   console.log('🩺 Created 3 fake equipment items.');
 }
