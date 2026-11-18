@@ -44,8 +44,8 @@ export function renderInventory({ user, inventory }) {
                 </td>
                 <td>
                   ${isLowStock 
-                    ? raw(html`<span style="background: #f8d7da; color: #842029; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">LOW STOCK</span>`)
-                    : raw(html`<span style="background: #d1e7dd; color: #0f5132; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">OK</span>`)
+                    ? raw(html`<span style="background: #fee2e2; color: #b91c1c; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">LOW STOCK</span>`)
+                    : raw(html`<span style="background: #dcfce7; color: #15803d; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">OK</span>`)
                   }
                 </td>
                 <td>

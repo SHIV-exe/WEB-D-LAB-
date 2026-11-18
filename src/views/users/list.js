@@ -30,8 +30,8 @@ export function renderUserList({ user, users }) {
               <td style="text-transform: capitalize;">${u.role}</td>
               <td>
                 ${u.is_active 
-                  ? raw(html`<span style="color: var(--success-color); font-weight: bold;">Active</span>`)
-                  : raw(html`<span style="color: var(--danger-color); font-weight: bold;">Inactive</span>`)}
+                  ? raw(html`<span style="background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Active</span>`)
+                  : raw(html`<span style="background: #fee2e2; color: #b91c1c; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Inactive</span>`)}
               </td>
             </tr>
           `).join(''))}

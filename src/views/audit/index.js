@@ -32,7 +32,7 @@ export function renderAuditLog({ user, logs }) {
             <tr>
               <td style="font-size: 0.875rem; color: var(--text-muted);">${new Date(log.timestamp).toLocaleString()}</td>
               <td><strong>${log.user_name}</strong></td>
-              <td><span style="background: var(--bg-color); padding: 0.25rem 0.5rem; border-radius: 4px; font-family: monospace; font-size: 0.875rem;">${log.action}</span></td>
+              <td><span style="background: #f1f5f9; border: 1px solid var(--border-color); color: #334155; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: monospace; font-size: 0.8rem; font-weight: 600;">${log.action}</span></td>
               <td>${log.entity}</td>
               <td>${log.entity_id || '-'}</td>
               <td style="font-size: 0.875rem; color: var(--text-muted);">${log.ip_address}</td>

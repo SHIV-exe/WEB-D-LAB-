@@ -8,13 +8,20 @@ export function layout({ title, body, user }) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title} | Hospital System</title>
+  <title>${title} | Pulse</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
   <nav class="navbar">
     <div class="nav-brand">
-      <a href="/">🏥 Hospital System</a>
+      <a href="/" class="brand-link">
+        <span class="brand-logo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+        </span>
+        <span class="brand-name">Pulse</span>
+      </a>
     </div>
     
     <div class="nav-links">

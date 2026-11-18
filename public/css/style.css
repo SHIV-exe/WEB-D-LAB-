@@ -1,27 +1,27 @@
 /* public/css/style.css */
 
-/* 1. CSS Variables (Modern Medical SaaS) */
+/* 1. CSS Variables (Modern Clean Medical Theme) */
 :root {
-  --primary-color: #0d9488;      /* Deep Teal */
-  --primary-hover: #0f766e;
-  --secondary-color: #475569;
-  --danger-color: #e11d48;
-  --success-color: #10b981;
+  --primary-color: #2563eb;      /* Professional Medical Blue */
+  --primary-hover: #1d4ed8;
+  --secondary-color: #64748b;
+  --danger-color: #dc2626;
+  --success-color: #16a34a;
   
-  --bg-color: #f0fdfa;           /* Very soft teal tint for the background */
+  --bg-color: #f8fafc;           /* Clean soft slate neutral (calm, zero green tint) */
   --card-bg: #ffffff;
   --text-main: #0f172a;
   --text-muted: #64748b;
   --border-color: #e2e8f0;
   
-  --nav-bg: #0f172a;             
+  --nav-bg: #0f172a;             /* Dark Slate */
   --nav-text: #f8fafc;
   
-  --radius: 16px;                /* Much larger, softer corners */
+  --radius: 14px;                /* Modern rounded corners */
   --radius-sm: 8px;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-  --shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025);
-  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --transition: all 0.2s ease-in-out;
 }
 
 /* 2. Reset & Base Styles */
@@ -57,24 +57,57 @@ a:hover {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  box-shadow: var(--shadow);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
-.nav-brand a {
+/* Brand Logo & Name */
+.brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
   color: var(--nav-text);
-  font-size: 1.35rem;
-  font-weight: 800;
   text-decoration: none;
+  font-weight: 700;
   letter-spacing: -0.5px;
+  transition: var(--transition);
+}
+
+.brand-link:hover {
+  text-decoration: none;
+  opacity: 0.95;
+}
+
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--primary-color);
+  color: #ffffff;
+  border-radius: 9px;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.brand-link:hover .brand-logo {
+  transform: scale(1.08);
+}
+
+.brand-name {
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #ffffff;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .nav-links a {
@@ -82,16 +115,23 @@ a:hover {
   font-weight: 600;
   font-size: 0.9rem;
   text-decoration: none;
-  opacity: 0.7;
-  padding: 0.5rem 1rem;
+  opacity: 0.75;
+  padding: 0.45rem 0.95rem;
   border-radius: 999px; /* Pill shape */
-  transition: var(--transition);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.nav-links a:hover, .nav-links a.active {
+.nav-links a:hover {
   opacity: 1;
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.1);
   text-decoration: none;
+}
+
+.nav-links a.active {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .user-badge {
@@ -101,31 +141,54 @@ a:hover {
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 700;
-  box-shadow: 0 2px 4px rgba(13, 148, 136, 0.4);
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
 }
 
-/* 4. Layout Containers */
+/* 4. Layout Containers & Smooth Transitions */
+@view-transition {
+  navigation: auto;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 3rem 2rem;
+  padding: 2.5rem 2rem;
+  animation: pageFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+}
+
+.container.page-exit {
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.12s ease-in, transform 0.12s ease-in;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .page-header {
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .page-header h1 {
-  font-size: 2.2rem;
+  font-size: 2.1rem;
   font-weight: 800;
-  letter-spacing: -1px;
-  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.35rem;
   color: var(--text-main);
 }
 
 .page-header p {
   color: var(--text-muted);
-  font-size: 1.05rem;
+  font-size: 1rem;
 }
 
 /* 5. Cards & Dashboard Grid */
@@ -138,21 +201,21 @@ a:hover {
 
 .stat-card, .card {
   background-color: var(--card-bg);
-  padding: 2rem;
+  padding: 1.75rem;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--border-color);
   transition: var(--transition);
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+  box-shadow: 0 12px 20px -4px rgba(15, 23, 42, 0.08);
 }
 
 .stat-card {
   border-left: none;
-  border-top: 6px solid var(--primary-color);
+  border-top: 5px solid var(--primary-color);
 }
 
 .stat-card h2 {
@@ -160,16 +223,16 @@ a:hover {
   color: var(--text-muted);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 1rem;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.75rem;
 }
 
 .stat-number {
-  font-size: 3.5rem;
+  font-size: 3.25rem;
   font-weight: 800;
   color: var(--text-main);
   line-height: 1;
-  background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, #4f46e5 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -179,9 +242,9 @@ a:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.6rem 1.25rem;
+  padding: 0.55rem 1.15rem;
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 600;
   border: none;
   border-radius: 999px; /* Pill shape */
   cursor: pointer;
@@ -193,7 +256,7 @@ a:hover {
 .btn-primary {
   background-color: var(--primary-color);
   color: white;
-  box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.3);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
 }
 
 .btn-primary:hover {
@@ -201,23 +264,25 @@ a:hover {
   text-decoration: none;
   color: white;
   transform: translateY(-1px);
-  box-shadow: 0 6px 8px -1px rgba(13, 148, 136, 0.4);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
 }
 
 .btn-secondary {
-  background-color: #f1f5f9;
+  background-color: #ffffff;
   color: var(--text-main);
+  border: 1px solid var(--border-color);
 }
 
 .btn-secondary:hover {
-  background-color: #e2e8f0;
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
   text-decoration: none;
 }
 
 .btn-logout {
   background-color: transparent;
   color: #fca5a5;
-  border: 1px solid rgba(252, 165, 165, 0.3);
+  border: 1px solid rgba(252, 165, 165, 0.35);
   padding: 0.35rem 1rem;
   border-radius: 999px;
   cursor: pointer;
@@ -251,12 +316,12 @@ a:hover {
 
 .form-control {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.7rem 0.95rem;
   font-size: 0.95rem;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   font-family: inherit;
-  background-color: #f8fafc;
+  background-color: #ffffff;
   transition: var(--transition);
   color: var(--text-main);
 }
@@ -264,8 +329,7 @@ a:hover {
 .form-control:focus {
   outline: none;
   border-color: var(--primary-color);
-  background-color: white;
-  box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.15);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
 /* 8. Tables */
@@ -276,7 +340,7 @@ a:hover {
 }
 
 .table th, .table td {
-  padding: 1.25rem 1rem;
+  padding: 1.1rem 1rem;
   text-align: left;
   border-bottom: 1px solid var(--border-color);
   font-size: 0.95rem;
@@ -288,7 +352,7 @@ a:hover {
   color: var(--text-muted);
   font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.75px;
 }
 
 .table tbody tr {
@@ -316,7 +380,7 @@ a:hover {
   padding: 3rem;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--border-color);
   width: 100%;
   max-width: 420px;
 }
@@ -337,12 +401,12 @@ a:hover {
 }
 
 .alert-error {
-  background-color: #fff1f2;
-  color: #be123c;
-  padding: 1rem;
+  background-color: #fef2f2;
+  color: #991b1b;
+  padding: 0.9rem 1rem;
   border-radius: var(--radius-sm);
   margin-bottom: 1.5rem;
-  border: 1px solid #fecdd3;
+  border: 1px solid #fecaca;
   font-size: 0.9rem;
   font-weight: 600;
 }

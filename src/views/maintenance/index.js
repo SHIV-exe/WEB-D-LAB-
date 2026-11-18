@@ -45,10 +45,20 @@ export function renderMaintenanceList({ user, tickets, statusFilter = '' }) {
           `) : raw(tickets.map(ticket => {
             let priorityColor = 'var(--text-main)';
             if (ticket.priority === 'urgent') priorityColor = 'var(--danger-color)';
-            if (ticket.priority === 'high') priorityColor = '#fd7e14'; 
+            if (ticket.priority === 'high') priorityColor = '#ea580c'; 
             
             const isResolved = ticket.status === 'resolved';
-            const rowStyle = isResolved ? 'opacity: 0.6; background-color: #f8f9fa;' : '';
+            const rowStyle = isResolved ? 'opacity: 0.65; background-color: #f8fafc;' : '';
+
+            let badgeBg = '#fef3c7';
+            let badgeColor = '#b45309';
+            if (ticket.status === 'in_progress') {
+              badgeBg = '#dbeafe';
+              badgeColor = '#1d4ed8';
+            } else if (isResolved) {
+              badgeBg = '#f1f5f9';
+              badgeColor = '#475569';
+            }
 
             return html`
               <tr style="${rowStyle}">
@@ -65,7 +75,7 @@ export function renderMaintenanceList({ user, tickets, statusFilter = '' }) {
                 </td>
                 <td>${ticket.reporter_name}</td>
                 <td>
-                  <span style="background: ${isResolved ? '#e2e3e5' : '#fff3cd'}; color: ${isResolved ? '#383d41' : '#664d03'}; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">
+                  <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">
                     ${ticket.status.replace('_', ' ')}
                   </span>
                 </td>

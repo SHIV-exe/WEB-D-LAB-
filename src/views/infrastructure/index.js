@@ -16,10 +16,10 @@ export function renderInfrastructure({ user, beds, equipment }) {
     
     <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 3rem;">
       ${raw(beds.map(bed => {
-        let statusColor = 'var(--success-color)';
-        let statusBg = '#d1e7dd';
-        if (bed.status === 'occupied') { statusColor = 'var(--danger-color)'; statusBg = '#f8d7da'; }
-        if (bed.status === 'maintenance') { statusColor = '#664d03'; statusBg = '#fff3cd'; }
+        let statusColor = '#15803d';
+        let statusBg = '#dcfce7';
+        if (bed.status === 'occupied') { statusColor = '#b91c1c'; statusBg = '#fee2e2'; }
+        if (bed.status === 'maintenance') { statusColor = '#b45309'; statusBg = '#fef3c7'; }
         
         return html`
           <div class="stat-card" style="border-left-color: ${statusColor}; padding: 1rem; display: flex; flex-direction: column; justify-content: space-between;">

@@ -6,8 +6,15 @@ export function renderLogin({ error = null } = {}) {
   const content = html`
     <div class="login-container">
       <div class="login-card">
+        <div style="display: flex; justify-content: center; margin-bottom: 1.25rem;">
+          <span class="brand-logo" style="width: 44px; height: 44px; border-radius: 12px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </span>
+        </div>
         <h1>Staff Login</h1>
-        <p>Enter your credentials to access the hospital system.</p>
+        <p>Enter your credentials to access Pulse.</p>
 
         ${error ? raw(html`
           <div class="alert-error">

@@ -49,7 +49,7 @@ export function renderPatientList({ user, patients, searchQuery = '', statusFilt
               </td>
             </tr>
           `) : raw(patients.map(patient => html`
-            <tr style="${patient.is_active === 0 ? 'opacity: 0.6; background-color: #f8f9fa;' : ''}">
+            <tr style="${patient.is_active === 0 ? 'opacity: 0.65; background-color: #f8fafc;' : ''}">
               <td><strong>${patient.mrn}</strong></td>
               <td>${patient.first_name} ${patient.last_name}</td>
               <td>${patient.dob || 'N/A'}</td>
@@ -57,8 +57,8 @@ export function renderPatientList({ user, patients, searchQuery = '', statusFilt
               <td>${patient.phone || 'N/A'}</td>
               <td>
                 ${patient.is_active === 0
-                  ? raw(html`<span style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: bold;">Discharged</span>`)
-                  : raw(html`<span style="color: var(--success-color); font-size: 0.75rem; text-transform: uppercase; font-weight: bold;">Active</span>`)}
+                  ? raw(html`<span style="background: #f1f5f9; color: var(--text-muted); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Discharged</span>`)
+                  : raw(html`<span style="background: #dcfce7; color: #15803d; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Active</span>`)}
               </td>
               <td>
                 <a href="/patients/${patient.id}" class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.875rem;">View</a>
